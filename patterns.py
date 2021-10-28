@@ -238,7 +238,6 @@ states = ["alabama", "ala.", "ala", "al",
           "wyoming", "wyo.", "wyo", "wy"]
 
 connector = ['the']
-
 phone_r1 = [
     {"label": "PHONE_NUMBER", "pattern":
      [{'SHAPE': 'ddddddd'}]},
@@ -299,7 +298,8 @@ person_r1 = [
      [{"POS": "PROPN"},]},
     {"label": "PERSON", "pattern":
      [{"POS": "PROPN"},
-      {"POS": "PROPN"},]}
+      {"POS": "PROPN"},
+      ]},
 ]
 
 

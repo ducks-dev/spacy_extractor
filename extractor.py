@@ -1,4 +1,5 @@
 import spacy
+import sys
 import csv
 import patterns as pat
 
@@ -8,7 +9,7 @@ def pattern_extractor(text_extracted, pattern, nlp = spacy.blank("en"),
     ruler.add_patterns(pattern)
 
     text = text_extracted[0]
-    all_ents = text_extracted[1]
+    found_ents = text_extracted[1]
     doc = nlp(text)
 
     to_replace_ents = ["PERSON", "ADDRESS", "EMAIL", "PHONE_NUMBER"]
@@ -18,14 +19,11 @@ def pattern_extractor(text_extracted, pattern, nlp = spacy.blank("en"),
             ent.text not in to_replace_ents and
             ent.text not in blacklist):
             text = text.replace(ent.text, ent.label_)
-            all_ents += [ent.text]
-    # for token in doc:
-    #     print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,
-    #         token.shape_, token.is_alpha, token.is_stop)
+            found_ents += [ent.text]
 
     nlp.remove_pipe("entity_ruler")
 
-    return (text, all_ents)
+    return (text, found_ents)
 
 def extractor_wrapper(nlp, nlp_no_ner, text):
     # split rounds due to longer patterns not being detected
@@ -45,7 +43,7 @@ def extractor_wrapper(nlp, nlp_no_ner, text):
         output = pattern_extractor(output, p)
 
     for p in pipeline_nlp:
-       output = pattern_extractor(output, p, nlp)
+        output = pattern_extractor(output, p, nlp_no_ner)
 
     for p in pipeline_nlp_ner:
        output = pattern_extractor(output, p, nlp)
@@ -67,19 +65,29 @@ def preprocess_text(text):
     return text
 
 def main():
-    nlp = spacy.load("en_core_web_lg", exclude=["ner"])
+    infile = sys.argv[1]
+    outfile = sys.argv[2]
+
     nlp_no_ner = spacy.load("en_core_web_lg", exclude=["ner"])
+    nlp = spacy.load("en_core_web_lg")
 
     rows = []
     header = []
-    with open("../texts.csv", encoding="ISO-8859-1") as csvfile:
+    with open(infile, encoding="ISO-8859-1") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=",")
 
-        header = next(csvreader)
+        # assuming data starts on the first line
+        # header = next(csvreader)
         for row in csvreader:
             rows.append(row)
 
-    for t in rows:
-        print(extractor_wrapper(nlp, nlp_no_ner, preprocess_text(t[0])))
+    filename = outfile
+
+    with open(outfile, 'w') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=",")
+        csvwriter.writerow(header)
+        for t in rows:
+            text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(t[0]))
+            csvwriter.writerow([text] + redacted)
 if __name__ == "__main__":
     main()
