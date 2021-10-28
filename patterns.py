@@ -1,6 +1,10 @@
-directions = ['n',
-              'e',
-              's',
+directions = ['n',  'north',
+              'ne', 'northeast',
+              'nw', 'northwest',
+              'e',  'east',
+              's',  'south',
+              'se', 'southeast',
+              'sw', 'southwest',
               'w', 'west']
 #removed 'is' 'cv' 'cvs' 'club' 'i'
 usps_abbr = ["allee", "alley", "ally", "aly", "anex", "annex", "annx",
@@ -298,14 +302,27 @@ street_r1 = [
     {"label": "ADDRESS", "pattern":
      [{"LIKE_NUM": True, 'OP': '?'},
       {"lower": {"IN": directions}, 'OP': '?'},
-      {"TEXT": {"REGEX": "[\w]+"}},
+      {"TEXT": {"REGEX": "[\w]{0-3}"}},
       {"lower": {"IN": usps_abbr}},
       {"IS_PUNCT": True},
       {"TEXT": {"REGEX": "[\w]"}, 'OP': '*'},
       {"IS_PUNCT": True},
-      {"lower": {"IN": states}, 'OP': '?'}
+      {"lower": {"IN": states}}
       ]},
 ]
+
+# street_r2 = [
+#     {"label": "ADDRESS", "pattern":
+#      [{"LIKE_NUM": True, 'OP': '?'},
+#       {"lower": {"IN": directions}, 'OP': '?'},
+#       {"TEXT": {"REGEX": "[\w]{0-3}"}},
+#       {"lower": {"IN": usps_abbr}},
+#       {"IS_PUNCT": True},
+#       {"TEXT": {"REGEX": "[\w]"}, 'OP': '*'},
+#       {"IS_PUNCT": True},
+#       {"lower": {"IN": states}, 'OP': '?'}
+#       ]},
+# ]
 
 street_r2 = [
     {"label": "ADDRESS", "pattern":

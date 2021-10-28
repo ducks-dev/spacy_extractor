@@ -63,7 +63,7 @@ def main():
 
     rows = []
     header = []
-    with open("texts.csv", encoding="ISO-8859-1") as csvfile:
+    with open("../texts.csv", encoding="ISO-8859-1") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=",")
 
         header = next(csvreader)
