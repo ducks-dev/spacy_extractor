@@ -6,7 +6,7 @@ directions = ['n',  'north',
               'se', 'southeast',
               'sw', 'southwest',
               'w', 'west']
-#removed 'is' 'cv' 'cvs' 'club' 'i'
+#removed 'is' 'cv' 'cvs' 'club' 'i' 'way' 'walk' 'wall'
 usps_abbr = ["allee", "alley", "ally", "aly", "anex", "annex", "annx",
              "anx", "arc", "arcade", "av", "ave", "aven", "avenu",
              "avenue", "avn", "avnue", "bayoo", "bayou", "bch",
@@ -90,7 +90,7 @@ usps_abbr = ["allee", "alley", "ally", "aly", "anex", "annex", "annx",
              "viadct", "viaduct", "view", "views", "vill", "villag",
              "village", "villages", "ville", "villg", "villiage", "vis",
              "vist", "vista", "vl", "vlg", "vlgs", "vlly", "vly", "vlys",
-             "vst", "vsta", "vw", "vws", "walk", "walks", "wall", "way",
+             "vst", "vsta", "vw", "vws", "walks",
              "ways", "well", "wells", "wl", "wls", "wy", "xing", "xrd",
 
              "allee.","alley.","ally.","aly.","anex.","annex.","annx.",
@@ -180,7 +180,7 @@ usps_abbr = ["allee", "alley", "ally", "aly", "anex", "annex", "annx",
              "ways.","well.","wells.","wl.","wls.","wy.","xing.","xrd."]
 
 
-
+#removed 'or' 'ok'
 states = ["alabama", "ala.", "ala", "al",
           "alaska", "alaska", "ak",
           "arizona", "ariz.", "ariz", "az",
@@ -219,8 +219,8 @@ states = ["alabama", "ala.", "ala", "al",
           "northcarolina", "n.c.", "nc",
           "northdakota", "n.d.", "nd",
           "ohio", "ohio", "oh",
-          "oklahoma", "okla.", "ok",
-          "oregon", "ore.", "ore", "or",
+          "oklahoma", "okla.",
+          "oregon", "ore.", "ore",
           "pennsylvania", "pa.", "pa",
           "puertorico", "p.r.", "pr",
           "rhodeisland", "r.i.", "ri",
@@ -236,6 +236,8 @@ states = ["alabama", "ala.", "ala", "al",
           "westvirginia", "w.va.", "wv",
           "wisconsin", "wis.", "wis", "wi",
           "wyoming", "wyo.", "wyo", "wy"]
+
+connector = ['the']
 
 phone_r1 = [
     {"label": "PHONE_NUMBER", "pattern":
@@ -294,7 +296,10 @@ to_replace_ents = ["PERSON", "ADDRESS", "EMAIL", "PHONE_NUMBER"]
 
 person_r1 = [
     {"label": "PERSON", "pattern":
-     [{"POS": "PROPN"},]}
+     [{"POS": "PROPN"},]},
+    {"label": "PERSON", "pattern":
+     [{"POS": "PROPN"},
+      {"POS": "PROPN"},]}
 ]
 
 
@@ -302,33 +307,52 @@ street_r1 = [
     {"label": "ADDRESS", "pattern":
      [{"LIKE_NUM": True, 'OP': '?'},
       {"lower": {"IN": directions}, 'OP': '?'},
-      {"TEXT": {"REGEX": "[\w]{0-3}"}},
+      {"TEXT": {"REGEX": "[\w]+"}},
       {"lower": {"IN": usps_abbr}},
-      {"IS_PUNCT": True},
+      {"IS_PUNCT": True, 'OP': '?'},
       {"TEXT": {"REGEX": "[\w]"}, 'OP': '*'},
-      {"IS_PUNCT": True},
+      {"IS_PUNCT": True, 'OP': '?'},
+      {"lower": {"IN": states}},
+      {"IS_PUNCT": True, 'OP': '?'},
+      {"TEXT": {"REGEX": "[\d]{5}"}}
+      ]},
+]
+
+street_r2 = [
+    {"label": "ADDRESS", "pattern":
+      [{"LIKE_NUM": True, 'OP': '?'},
+      {"lower": {"IN": directions}, 'OP': '?'},
+      {"TEXT": {"REGEX": "[\w]"}},
+      {"lower": {"IN": usps_abbr}},
+      {"IS_PUNCT": True, 'OP': '?'},
+      {"TEXT": {"REGEX": "[\w]"}, 'OP': '?'},
+       {"TEXT": {"REGEX": "[\w]"}, 'OP': '?'},
+      {"IS_PUNCT": True, 'OP': '?'},
       {"lower": {"IN": states}}
       ]},
 ]
 
-# street_r2 = [
-#     {"label": "ADDRESS", "pattern":
-#      [{"LIKE_NUM": True, 'OP': '?'},
-#       {"lower": {"IN": directions}, 'OP': '?'},
-#       {"TEXT": {"REGEX": "[\w]{0-3}"}},
-#       {"lower": {"IN": usps_abbr}},
-#       {"IS_PUNCT": True},
-#       {"TEXT": {"REGEX": "[\w]"}, 'OP': '*'},
-#       {"IS_PUNCT": True},
-#       {"lower": {"IN": states}, 'OP': '?'}
-#       ]},
-# ]
-
-street_r2 = [
+street_r3 = [
     {"label": "ADDRESS", "pattern":
-     [{"LIKE_NUM": True, 'OP': '?'},
+     [{"LIKE_NUM": True},
       {"lower": {"IN": directions}, 'OP': '?'},
-      {"TEXT": {"REGEX": "[\w]+"}},
+      {"TEXT": {"REGEX": "[\w]"}, 'OP': '?'},
+      {"TEXT": {"REGEX": "[\w]"}, 'OP': '?'},
+      {"TEXT": {"REGEX": "[\w]"}, 'OP': '?'},
+      {"lower": {"IN": usps_abbr}}
+      ]},
+    {"label": "ADDRESS", "pattern":
+      [{"LIKE_NUM": True},
+      {"lower": {"IN": directions}, 'OP': '?'},
+      {"TEXT": {"REGEX": "[\w]"}},
+      {"TEXT": {"REGEX": "[\w]"}, 'OP': '?'},
+      {"lower": {"IN": usps_abbr}}
+      ]},
+]
+
+street_r4 = [
+    {"label": "ADDRESS", "pattern":
+     [{"POS": {"REGEX":"[NOUN]"}, 'OP': '+'},
       {"lower": {"IN": usps_abbr}}
       ]},
 ]
