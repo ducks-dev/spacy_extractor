@@ -352,7 +352,8 @@ street_r3 = [
 
 street_r4 = [
     {"label": "ADDRESS", "pattern":
-     [{"POS": {"REGEX":"[NOUN]"}, 'OP': '+'},
+     [{"POS": {"REGEX":"[VERB]"}, 'OP': ?},
+      {"POS": {"REGEX":"[NOUN]"}, 'OP': '+'},
       {"lower": {"IN": usps_abbr}}
       ]},
 ]
