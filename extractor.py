@@ -64,45 +64,52 @@ def preprocess_text(text):
         text = text.replace(x, y)
     return text
 
+def read_from_csv(infile):
+    with open(infile, encoding="ISO-8859-1") as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=",")
+        data = []
+        # assuming data starts on the first line
+        for row in csvreader:
+            data += [row]
+    return data
+
+def write_to_csv(outfile, data):
+    # writes all redacted lines to named csv with no header
+    with open(outfile, 'w') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=",")
+        #csvwriter.writerow(header)
+        for row in data:
+            csvwriter.writerow(row)
+
+def redact_data(data, nlp, nlp_no_ner):
+    data = read_from_csv(sys.argv[1])
+    split_data = []
+    for line in data:
+        text, redacted = extractor_wrapper(nlp, nlp_no_ner,
+                                           preprocess_text(line[0]))
+        split_data.append([text] + redacted)
+    return split_data
+
 def main():
     nlp_no_ner = spacy.load("en_core_web_lg", exclude=["ner"])
     nlp = spacy.load("en_core_web_lg")
 
     if len(sys.argv) >= 3:
-        infile = sys.argv[1]
-        outfile = sys.argv[2]
-        rows = []
-        with open(infile, encoding="ISO-8859-1") as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=",")
+        data = read_from_csv(sys.argv[1])
+        redacted = redact_data(data, nlp, nlp_no_ner)
+        write_to_csv(sys.argv[2], redacted)
 
-            # assuming data starts on the first line
-            # header = next(csvreader)
-            for row in csvreader:
-                rows.append(row)
-
-        # writes all redacted lines to named csv with no header
-        with open(outfile, 'w') as csvfile:
-            csvwriter = csv.writer(csvfile, delimiter=",")
-            #csvwriter.writerow(header)
-            for t in rows:
-                text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(t[0]))
-                csvwriter.writerow([text] + redacted)
     elif len(sys.argv) >= 2:
-        infile = sys.argv[1]
-
-        rows = []
-        with open(infile, encoding="ISO-8859-1") as csvfile:
-            csvreader = csv.reader(csvfile, delimiter=",")
-
-            # assumes data starts on the first line and is only column
-            for row in csvreader:
-                text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(row[0]))
-                print([text] + redacted)
+        data = read_from_csv(sys.argv[1])
+        redacted = redact_data(data, nlp, nlp_no_ner)
+        for row in redacted:
+            print(row)
     else:
         print("You have entered interactive mode. Type exit to exit.")
         inline = input()
         while(inline != "exit"):
-            text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(inline))
+            text, redacted = extractor_wrapper(nlp, nlp_no_ner,
+                                               preprocess_text(inline))
             print([text]  + redacted)
             inline = input()
 if __name__ == "__main__":
