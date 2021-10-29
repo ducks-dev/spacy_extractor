@@ -65,29 +65,45 @@ def preprocess_text(text):
     return text
 
 def main():
-    infile = sys.argv[1]
-    outfile = sys.argv[2]
-
     nlp_no_ner = spacy.load("en_core_web_lg", exclude=["ner"])
     nlp = spacy.load("en_core_web_lg")
 
-    rows = []
-    header = []
-    with open(infile, encoding="ISO-8859-1") as csvfile:
-        csvreader = csv.reader(csvfile, delimiter=",")
+    if len(sys.argv) >= 3:
+        infile = sys.argv[1]
+        outfile = sys.argv[2]
+        rows = []
+        with open(infile, encoding="ISO-8859-1") as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=",")
 
-        # assuming data starts on the first line
-        # header = next(csvreader)
-        for row in csvreader:
-            rows.append(row)
+            # assuming data starts on the first line
+            # header = next(csvreader)
+            for row in csvreader:
+                rows.append(row)
 
-    filename = outfile
+        # writes all redacted lines to named csv with no header
+        with open(outfile, 'w') as csvfile:
+            csvwriter = csv.writer(csvfile, delimiter=",")
+            #csvwriter.writerow(header)
+            for t in rows:
+                text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(t[0]))
+                csvwriter.writerow([text] + redacted)
+    elif len(sys.argv) >= 2:
+        infile = sys.argv[1]
 
-    with open(outfile, 'w') as csvfile:
-        csvwriter = csv.writer(csvfile, delimiter=",")
-        csvwriter.writerow(header)
-        for t in rows:
-            text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(t[0]))
-            csvwriter.writerow([text] + redacted)
+        rows = []
+        with open(infile, encoding="ISO-8859-1") as csvfile:
+            csvreader = csv.reader(csvfile, delimiter=",")
+
+            # assumes data starts on the first line and is only column
+            for row in csvreader:
+                text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(row[0]))
+                print([text] + redacted)
+    else:
+        print("You have entered interactive mode. Type exit to exit.")
+        inline = input()
+        while(inline != "exit"):
+            text, redacted = extractor_wrapper(nlp, nlp_no_ner, preprocess_text(inline))
+            print([text]  + redacted)
+            inline = input()
 if __name__ == "__main__":
     main()

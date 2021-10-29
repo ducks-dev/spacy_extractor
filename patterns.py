@@ -6,7 +6,7 @@ directions = ['n',  'north',
               'se', 'southeast',
               'sw', 'southwest',
               'w', 'west']
-#removed 'is' 'cv' 'cvs' 'club' 'i' 'way' 'walk' 'wall'
+#removed 'is' 'cv' 'cvs' 'club' 'i' 'way' 'walk' 'wall' 'corner'
 usps_abbr = ["allee", "alley", "ally", "aly", "anex", "annex", "annx",
              "anx", "arc", "arcade", "av", "ave", "aven", "avenu",
              "avenue", "avn", "avnue", "bayoo", "bayou", "bch",
@@ -20,7 +20,7 @@ usps_abbr = ["allee", "alley", "ally", "aly", "anex", "annex", "annx",
              "centers", "centr", "centre", "cir", "circ", "circl",
              "circle", "circles", "cirs", "ck", "clb", "clf", "clfs",
              "cliff", "cliffs", "cmn", "cmp", "cnter", "cntr",
-             "cnyn", "common", "cor", "corner", "corners", "cors",
+             "cnyn", "common", "cor", "corners", "cors",
              "course", "court", "courts", "cove", "coves", "cp",
              "cpe", "cr", "crcl", "crcle", "crecent", "creek", "cres",
              "crescent", "cresent", "crest", "crk", "crossing",
@@ -240,49 +240,66 @@ states = ["alabama", "ala.", "ala", "al",
 connector = ['the']
 phone_r1 = [
     {"label": "PHONE_NUMBER", "pattern":
-     [{'SHAPE': 'ddddddd'}]},
-    {"label": "PHONE_NUMBER", "pattern":
-     [{'SHAPE': 'dddddddddd'}]},
-    {"label": "PHONE_NUMBER", "pattern":
-     [{'SHAPE': 'ddddddddddd'}]},
-    {"label": "PHONE_NUMBER", "pattern":
      [{'SHAPE': 'd'},
-      {'ORTH': '('},
+      {'ORTH': '-', 'OP': '?'},
+      {'ORTH': '(', 'OP': '?'},
       {'SHAPE': 'ddd'},
-      {'ORTH': ')'},
+      {'ORTH': ')', 'OP': '?'},
+      {'ORTH': '-', 'OP': '?'},
       {'SHAPE': 'ddd'},
       {'ORTH': '-', 'OP': '?'},
       {'SHAPE': 'dddd'}]},
     {"label": "PHONE_NUMBER", "pattern":
      [{'SHAPE': 'd'},
       {'ORTH': '-', 'OP': '?'},
+      {'ORTH': '(', 'OP': '?'},
       {'SHAPE': 'ddd'},
+      {'ORTH': ')', 'OP': '?'},
       {'ORTH': '-', 'OP': '?'},
-      {'SHAPE': 'ddd'},
+      {"TEXT": {"REGEX": "^\d{7}$"}}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{'SHAPE': 'd'},
       {'ORTH': '-', 'OP': '?'},
-      {'SHAPE': 'dddd'}]},   ]
-
+      {"TEXT": {"REGEX": "^\d{6}$"}},
+      {'ORTH': '-', 'OP': '?'},
+      {'SHAPE': 'dddd'}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{'SHAPE': 'd'},
+      {'ORTH': '-', 'OP': '?'},
+      {"TEXT": {"REGEX": "^\d{10}$"}}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{"TEXT": {"REGEX": "^\d{11}$"}}
+      ]},
+]
 
 phone_r2 = [
     {"label": "PHONE_NUMBER", "pattern":
-     [{'ORTH': '('},
+     [{'ORTH': '(', 'OP': '?'},
       {'SHAPE': 'ddd'},
-      {'ORTH': ')'},
+      {'ORTH': ')', 'OP': '?'},
+      {'ORTH': '-', 'OP': '?'},
       {'SHAPE': 'ddd'},
       {'ORTH': '-', 'OP': '?'},
       {'SHAPE': 'dddd'}]},
     {"label": "PHONE_NUMBER", "pattern":
-     [{'SHAPE': 'ddd'},
-      {'ORTH': '-', 'OP': '?'},
+     [{'ORTH': '(', 'OP': '?'},
       {'SHAPE': 'ddd'},
+      {'ORTH': ')', 'OP': '?'},
       {'ORTH': '-', 'OP': '?'},
-      {'SHAPE': 'dddd'}]},   ]
+      {"TEXT": {"REGEX": "^\d{7}$"}}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{"TEXT": {"REGEX": "^\d{10}$"}}
+      ]},
+]
 
 phone_r3 = [
     {"label": "PHONE_NUMBER", "pattern":
      [{'SHAPE': 'ddd'},
       {'ORTH': '-', 'OP': '?'},
       {'SHAPE': 'dddd'}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{"TEXT": {"REGEX": "^\d{7}$"}}
+      ]},
 ]
 
 email_r1 = [
