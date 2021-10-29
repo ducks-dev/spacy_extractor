@@ -240,6 +240,18 @@ states = ["alabama", "ala.", "ala", "al",
 connector = ['the']
 phone_r1 = [
     {"label": "PHONE_NUMBER", "pattern":
+     [{'SHAPE': 'd-(ddd)-ddd'},
+      {'ORTH': '-', 'OP': '?'},
+      {'SHAPE': 'dddd'}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{'SHAPE': 'd(ddd)-ddd'},
+      {'ORTH': '-', 'OP': '?'},
+      {'SHAPE': 'dddd'}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{'SHAPE': 'd(ddd)ddd'},
+      {'ORTH': '-', 'OP': '?'},
+      {'SHAPE': 'dddd'}]},
+    {"label": "PHONE_NUMBER", "pattern":
      [{'SHAPE': 'd'},
       {'ORTH': '-', 'OP': '?'},
       {'ORTH': '(', 'OP': '?'},
@@ -273,6 +285,19 @@ phone_r1 = [
 ]
 
 phone_r2 = [
+    {"label": "PHONE_NUMBER", "pattern":
+     [{'ORTH': '('},
+      {'SHAPE': 'ddd)-ddd'},
+      {'ORTH': '-', 'OP': '?'},
+      {'SHAPE': 'dddd'}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{'ORTH': '('},
+      {'SHAPE': 'ddd)ddd'},
+      {'ORTH': '-', 'OP': '?'},
+      {'SHAPE': 'dddd'}]},
+    {"label": "PHONE_NUMBER", "pattern":
+     [{'ORTH': '('},
+      {'TEXT': {"REGEX": "^\d{3}\)\d{7}$"}}]},
     {"label": "PHONE_NUMBER", "pattern":
      [{'ORTH': '(', 'OP': '?'},
       {'SHAPE': 'ddd'},
